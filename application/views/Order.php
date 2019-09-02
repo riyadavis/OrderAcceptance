@@ -30,36 +30,52 @@
 			let response = await request.json();
 			// var count = Object.keys(response).length;
 			console.log(response);
-			let cartid = new Array();
-			cartid.name = "cartid";
-			i = 0;
+			// let cartid = new Array();
+			// cartid.name = "cartid";
+			// i = 0;
 			
 			response.map(r=>{
 				let para = document.createElement('p');
 				let textnode = r.id;
-				cartid[i] = r.id;
-				i++;
+				// cartid[i] = r.id;
+				// i++;
+				  cartId = document.createElement('input');
+					cartId.value = r.id;
+					cartId.type = "hidden";
+					cartId.name = "cartId";
+					cartId.id = "cartId";
+					div.appendChild(cartId);
+				 cartItems = document.createElement('input');
+				cartItems.value = r.items_added;
+				cartItems.type = "hidden";
+				cartItems.id = "cartItems";
+				cartItems.name = "cartItems";
 				let text = document.createTextNode('cart Id :'+textnode);
 				para.appendChild(text);
 				div.appendChild(para);
+				div.appendChild(cartItems);
+				div.appendChild(cartId);
 				
 			});
 			let button = document.createElement('input');
 			button.type = "button";
 			button.value = "Place Order";
-			let arr = document.createElement('input');
-			arr.value = JSON.stringify(cartid);
-			arr.type = "hidden";
-			arr.name = "arr";
-			arr.id = "arr";
-			div.appendChild(arr);
-			div.appendChild(button);
+			// let arr = document.createElement('input');
+			// arr.value = JSON.stringify(cartid);
+			// arr.type = "hidden";
+			// arr.name = "arr";
+			// arr.id = "arr";
+			// div.appendChild(arr);
+			
+			div.appendChild(button); console.log(cartId.value);
 			button.onclick = async function(){
 					let url = "<?php echo site_url('OrderAcceptanceApi/InsertOrder'); ?>";
 					let form = new FormData();
-					form.append('arr',arr.value);
-					// console.log(form);
-
+					form.append('cartItems',JSON.stringify(cartItems.value));
+					form.append('cartId',cartId.value);
+					// form.append('')
+					console.log(form);
+				// console.log(JSON.stringify(cartItems.value));
 					// for (var key of form.entries()) {
 					// 	console.log(key[0] + ', ' + key[1]);
 					// }
@@ -71,11 +87,33 @@
 					
 					let response = await request.json();
 					console.log(response);
-					
+					push();
+					 function push()
+					{
+						let url = "<?php echo site_url('OrderAcceptanceApi/confirmMessage'); ?>";
+						let request = await fetch (url);
+						
+					}
 			}
 			
 		}
 
 	});
 </script>
+<script src="https://js.pusher.com/5.0/pusher.min.js"></script>
+  <script>
+
+    // Enable pusher logging - don't include this in production
+    // Pusher.logToConsole = true;
+
+    var pusher = new Pusher('e6256b34427ca9b29815', {
+      cluster: 'ap2',
+      forceTLS: true
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+      alert(JSON.stringify(data));
+    });
+  </script>
 </html>

@@ -30,4 +30,22 @@ class OrderAcceptanceApi extends CI_Controller {
 		$returnData = $this->OrderAcceptanceDatabase->InsertOrder();
 		echo json_encode($returnData);
 	}
+
+	public function confirmMessage()
+	{
+		$this->load->view('vendor/autoload.php');
+		$options = array(
+			'cluster' => 'ap2',
+			'useTLS' => true
+			);
+			$pusher = new Pusher\Pusher(
+			'e6256b34427ca9b29815',
+			'e1a37e8c0910ae055d3b',
+			'838370',
+			$options
+			);
+	
+			$data['message'] = 'Your Order is confirmed';
+			$pusher->trigger('my-channel', 'my-event', $data);
+	}
 }

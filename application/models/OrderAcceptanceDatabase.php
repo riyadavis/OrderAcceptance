@@ -3,6 +3,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class OrderAcceptanceDatabase extends CI_Model {
 
+    public function SaltData()
+    {
+        $salt = 'adastratechnologies';
+        $hash = sha1($salt.'adastra');
+        $this->session->set_userdata('userauth',$hash);
+        if(isset($_GET['q']))
+        {
+            $mobno = $_GET['q'];
+            $pw_hash = sha1($salt.$mobno);
+            $matchData = $this->db->query("select * from api_table where MATCH(salt) AGAINST('$pw_hash' IN NATURAL LANGUAGE MODE)")->result_array(); 
+            if($this->db->affected_rows()>0)
+            {
+                $this->session->set_userdata('userauth',$pw_hash);
+                return 0;
+            }
+        }
+        return 0;
+        // return $pw_hash;
+        // return $iduser;
+    }
+
     public function ViewCart()
     {
         //user_id session variable
@@ -25,12 +46,14 @@ class OrderAcceptanceDatabase extends CI_Model {
 
         $items = json_decode($_POST['cartItems']);
         $deliveryBoyId = 1;
+        $userid = $_GET['q'];
         $orderArray = array('time_stamp'=>Date('Y-m-d h:i:s'),
-                        'customer_id'=>$this->session->userdata('userid'),
+                        'customer_id'=>$userid,
                         'getItems'=>json_encode($items),
                         'deliveryBoyId'=>$deliveryBoyId);
         $cartId = $this->input->post('cartId');
-        $userid = $this->session->userdata('userid');
+        
+        // $userid = $this->session->userdata('userid');
         // return $cartId;
         $orderId = $this->db->query("select * from customer_order where customer_id = '$userid'")->row();
         if($this->db->affected_rows()>0)

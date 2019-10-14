@@ -7,6 +7,15 @@ class OrderAcceptanceApi extends CI_Controller {
 	{
 		parent :: __construct();
 		$this->load->model('OrderAcceptanceDatabase');
+		if($this->session->has_userdata('userauth') == FALSE)
+        {
+			$this->OrderAcceptanceDatabase->SaltData();
+			if($this->session->has_userdata('userauth') == FALSE)
+			{
+				echo json_encode("error");
+				die();
+			}
+		}
 	}
 
 	public function index()

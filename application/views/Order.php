@@ -69,7 +69,7 @@
 			
 			div.appendChild(button); console.log(cartId.value);
 			button.onclick = async function(){
-					let url = "<?php echo site_url('OrderAcceptanceApi/InsertOrder'); ?>";
+					let url = "<?php echo site_url('OrderAcceptanceApi/InsertOrder'); ?>?q=1";
 					let form = new FormData();
 					form.append('cartItems',JSON.stringify(cartItems.value));
 					form.append('cartId',cartId.value);
@@ -88,7 +88,7 @@
 					let response = await request.json();
 					console.log(response);
 					push();
-					 function push()
+					 async function push()
 					{
 						let url = "<?php echo site_url('OrderAcceptanceApi/confirmMessage'); ?>";
 						let request = await fetch (url);
